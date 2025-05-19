@@ -1,4 +1,6 @@
-psycopg2
 pandas
+psycopg2-binary
 sqlalchemy
 python-dotenv
+black
+bandit

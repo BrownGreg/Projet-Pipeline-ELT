@@ -1,57 +1,96 @@
+import os
+import logging
 import pandas as pd
 import psycopg2
-from psycopg2 import sql
 from dotenv import load_dotenv
-import os
 
-# Charger les variables d’environnement
 load_dotenv()
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 DB_PARAMS = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "port": os.getenv("DB_PORT", 5432),
-    "dbname": os.getenv("DB_NAME", "elt_project"),
-    "user": os.getenv("DB_USER", "hetic"),
-    "password": os.getenv("DB_PASSWORD", "hetic123")
+    "host": os.getenv("DB_HOST"),
+    "port": int(os.getenv("DB_PORT", 5432)),
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
 }
 
-CSV_PATH = "/home/browngreg/Hetic/DataEng/Projet-Pipeline-ELT/data/raw/cars_dataset.csv"
+for key, value in DB_PARAMS.items():
+    if value is None:
+        logging.error(f"Variable d'environnement manquante : {key}")
+        raise EnvironmentError(f"Missing required DB config: {key}")
+    if key == "password":
+        logging.info(f"{key} = ********")
+    else:
+        logging.info(f"{key} = {value}")
 
+CSV_PATH = "data/raw/cars_dataset.csv"
 
-# Lecture des données
-df = pd.read_csv(CSV_PATH)
+try:
+    df = pd.read_csv(CSV_PATH)
+    df.columns = df.columns.str.strip().str.lower()  # normalisation
+    logging.info(f"Fichier CSV chargé avec succès : {CSV_PATH} ({len(df)} lignes)")
+    logging.info(f"Colonnes détectées : {df.columns.tolist()}")
+except FileNotFoundError:
+    logging.error(f"File not found : {CSV_PATH}")
+    raise
+except Exception as e:
+    logging.error(f"Erreur lors du chargement CSV : {e}")
+    raise
 
-# Connexion à PostgreSQL
-conn = psycopg2.connect(**DB_PARAMS)
-cur = conn.cursor()
+try:
+    conn = psycopg2.connect(**DB_PARAMS)
+    cur = conn.cursor()
+    logging.info("Connexion à PostgreSQL réussie")
 
-# Création de la table raw
-cur.execute("""
-    DROP TABLE IF EXISTS raw_cars;
-    CREATE TABLE raw_cars (
-        model TEXT,
-        year INT,
-        price INT,
-        transmission TEXT,
-        mileage INT,
-        fuelType TEXT,
-        tax FLOAT,
-        mpg FLOAT,
-        engineSize FLOAT,
-        make TEXT
-    );
-""")
-conn.commit()
-
-# Insertion des données
-for _, row in df.iterrows():
     cur.execute("""
-        INSERT INTO raw_cars (model, year, price, transmission, mileage, fuelType, tax, mpg, engineSize, make)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-    """, tuple(row))
+        CREATE TABLE IF NOT EXISTS raw_cars (
+            id SERIAL PRIMARY KEY,
+            model TEXT,
+            year INT,
+            price FLOAT,
+            transmission TEXT,
+            mileage INT,
+            fueltype TEXT,
+            tax FLOAT,
+            mpg FLOAT,
+            enginesize FLOAT,
+            make TEXT
+        );
+    """)
 
-conn.commit()
-cur.close()
-conn.close()
+    for _, row in df.iterrows():
+        cur.execute("""
+            INSERT INTO raw_cars (
+                model, year, price, transmission,
+                mileage, fueltype, tax, mpg, enginesize, make
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (
+            row.get("model"),
+            row.get("year"),
+            row.get("price"),
+            row.get("transmission"),
+            row.get("mileage"),
+            row.get("fueltype"),
+            row.get("tax"),
+            row.get("mpg"),
+            row.get("enginesize"),
+            row.get("make")
+        ))
 
-print("✅ Données insérées dans la table raw_cars.")
+    conn.commit()
+    logging.info(f"Données insérées avec succès dans la table raw_cars")
+
+except Exception as e:
+    logging.error(f"Erreur PostgreSQL : {e}")
+    raise
+finally:
+    if 'cur' in locals():
+        cur.close()
+    if 'conn' in locals():
+        conn.close()
+        logging.info("Connexion PostgreSQL fermée")

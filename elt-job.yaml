@@ -18,10 +18,12 @@ spec:
         env:
         - name: DB_HOST
           value: "postgres"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "elt_project"
         - name: DB_USER
           value: "hetic"
         - name: DB_PASSWORD
           value: "hetic123"
-        - name: DB_NAME
-          value: "elt_project"
       restartPolicy: Never
