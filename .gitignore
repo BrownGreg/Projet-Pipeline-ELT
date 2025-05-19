@@ -3,6 +3,7 @@ venv/
 __pycache__/
 *.pyc
 data/raw/*
+/home/browngreg/Hetic/DataEng/Projet-Pipeline-ELT/minikube-linux-amd64
 minikube-linux-amd64
 *.zip
 *.tar.gz
