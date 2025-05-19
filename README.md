@@ -21,9 +21,9 @@ Il consiste à créer un pipeline ELT complet de l’ingestion à la modélisati
 - **Python** : ingestion, orchestration
 - **PostgreSQL** : base de données relationnelle
 - **Docker** : environnement de base de données isolé
-- **psycopg2 / pandas / sqlalchemy** : connexion et manipulation de données
+- **psycopg2-binary / pandas / sqlalchemy** : connexion et manipulation de données
 - **SQL** : création des tables et transformations
-- **dotenv / Makefile** : gestion d’environnement et automatisation
+- **dotenv / Makefile / logging / time** : gestion d’environnement, automatisation, journalisation
 
 ---
 
@@ -70,6 +70,8 @@ make stop      # Stoppe les conteneurs
 make reset     # Stoppe tout + supprime les volumes
 ```
 
+Un rapport automatique est généré dans `logs/report.txt` à chaque exécution.
+
 ---
 
 ## 📊 Structure du projet
@@ -80,6 +82,7 @@ Projet-Pipeline-ELT/
 ├── docs/                    # Schémas, présentation, PPT
 ├── scripts/                 # Scripts Python : ingestion + orchestration
 ├── sql/                    # Création des tables et transformations
+├── logs/                   # Logs d'exécution et rapports
 ├── .env.example            # Variables d’environnement (exemple)
 ├── docker-compose.yml      # Conteneur PostgreSQL
 ├── Makefile                # Automatisation
@@ -112,5 +115,6 @@ Projet-Pipeline-ELT/
 - Ne pas versionner `.env` ni `venv/`
 - Docker doit être configuré avec WSL2 sur chaque poste
 - PostgreSQL tourne sur `localhost:5432` par défaut
+- Vérifier les ports et configurations dans `docker-compose.yml`
+- Les logs sont générés dans `logs/` pour chaque exécution
 
----

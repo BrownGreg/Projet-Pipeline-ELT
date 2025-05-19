@@ -1,10 +1,10 @@
+import time
 import subprocess
 import logging
 import os
 from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 load_dotenv()
 
 def run_extract_load():
@@ -26,6 +26,17 @@ def run_sql_transformations():
 
 if __name__ == "__main__":
     logging.info("=== PIPELINE ELT - Démarrage ===")
+
+    start = time.time()
+
     run_extract_load()
     run_sql_transformations()
+
+    end = time.time()
+    duration = end - start
+
+    os.makedirs("logs", exist_ok=True)
+    with open("logs/report.txt", "w") as f:
+        f.write(f"✅ Pipeline terminé en {duration:.2f} secondes.\n")
+
     logging.info("=== PIPELINE ELT - Terminé ===")
