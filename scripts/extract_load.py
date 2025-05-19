@@ -15,7 +15,7 @@ DB_PARAMS = {
     "password": os.getenv("DB_PASSWORD", "hetic123")
 }
 
-CSV_PATH = "/home/browngreg/Hetic/DataEng/Projet-Pipeline-ELT/data/cars_dataset.csv"
+CSV_PATH = "/home/browngreg/Hetic/DataEng/Projet-Pipeline-ELT/data/raw/cars_dataset.csv"
 
 
 # Lecture des données
