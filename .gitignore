@@ -3,3 +3,7 @@ venv/
 __pycache__/
 *.pyc
 data/raw/*
+minikube-linux-amd64
+*.zip
+*.tar.gz
+*.csv
