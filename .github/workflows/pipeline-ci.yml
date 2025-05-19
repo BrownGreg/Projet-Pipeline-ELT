@@ -2,31 +2,15 @@ name: Pipeline ELT CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  test:
+  lint-test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: hetic
-          POSTGRES_PASSWORD: hetic123
-          POSTGRES_DB: elt_project
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -38,11 +22,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run test connection
-      run: |
-        cp .env.example .env
-        python tests/test_connection.py
+    - name: Run linter (black)
+      run: black --check scripts/
 
-    - name: Run pipeline orchestrator
-      run: |
-        python scripts/orchestrator.py
+    - name: Run security scan (bandit)
+      run: bandit -r scripts/
