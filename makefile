@@ -1,3 +1,6 @@
+.PHONY: run etl init-env stop reset logs check
+
+
 run:
 	docker compose up -d
 

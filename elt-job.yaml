@@ -6,24 +6,9 @@ spec:
   template:
     spec:
       containers:
-      - name: elt
-        image: python:3.10
-        command: ["sh", "-c"]
-        args:
-          - |
-            apt update && apt install -y python3-pip
-            pip install pandas sqlalchemy psycopg2-binary python-dotenv
-            git clone https://github.com/BrownGreg/Projet-Pipeline-ELT.git
-            cd Projet-Pipeline-ELT && python scripts/orchestrator.py
-        env:
-        - name: DB_HOST
-          value: "postgres"
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_NAME
-          value: "elt_project"
-        - name: DB_USER
-          value: "hetic"
-        - name: DB_PASSWORD
-          value: "hetic123"
+        - name: elt
+          image: elt-orchestrator:latest
+          envFrom:
+            - secretRef:
+                name: db-credentials
       restartPolicy: Never
