@@ -2,6 +2,7 @@ import time
 import subprocess
 import logging
 import os
+import sys
 from dotenv import load_dotenv
 
 logging.basicConfig(
@@ -12,8 +13,9 @@ load_dotenv()
 
 def run_extract_load():
     logging.info("Lancement de l'ingestion des données brutes...")
+    script_path = os.path.abspath("scripts/extract_load.py")
     result = subprocess.run(
-        ["python", "scripts/extract_load.py"], capture_output=True, text=True
+        [sys.executable, script_path], capture_output=True, text=True
     )
     if result.returncode == 0:
         logging.info("Ingestion réussie.")
@@ -27,22 +29,15 @@ def run_sql_transformations():
     env = os.environ.copy()
     env["PGPASSWORD"] = os.getenv("DB_PASSWORD")
 
+    psql_path = "/usr/bin/psql"  # Adapter si besoin selon l'image Docker
     psql_cmd = [
-        "psql",
-        "-h",
-        os.getenv("DB_HOST"),
-        "-U",
-        os.getenv("DB_USER"),
-        "-d",
-        os.getenv("DB_NAME"),
-        "-f",
-        "sql/transformations.sql",
+        psql_path,
+        "-h", os.getenv("DB_HOST"),
+        "-U", os.getenv("DB_USER"),
+        "-d", os.getenv("DB_NAME"),
+        "-f", os.path.abspath("sql/transformations.sql"),
     ]
-
-    script_path = os.path.abspath("scripts/extract_load.py")
-    result = subprocess.run(
-        ["python3", script_path], capture_output=True, text=True, check=True
-    )
+    result = subprocess.run(psql_cmd, capture_output=True, text=True, env=env)
 
     if result.returncode == 0:
         logging.info("Transformations SQL exécutées avec succès.")
