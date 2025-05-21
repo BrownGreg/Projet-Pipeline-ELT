@@ -39,7 +39,14 @@ def run_sql_transformations():
         "sql/transformations.sql",
     ]
 
-    result = subprocess.run(psql_cmd, env=env, capture_output=True, text=True)
+    script_path = os.path.abspath("scripts/extract_load.py")
+    result = subprocess.run(
+    ["python3", script_path],
+    capture_output=True,
+    text=True,
+    check=True
+    )
+
 
     if result.returncode == 0:
         logging.info("Transformations SQL exécutées avec succès.")
