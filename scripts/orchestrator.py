@@ -65,3 +65,6 @@ if __name__ == "__main__":
         f.write(f"✅ Pipeline terminé en {duration:.2f} secondes.\n")
 
     logging.info("=== PIPELINE ELT - Terminé ===")
+
+
+# give up de la CI
