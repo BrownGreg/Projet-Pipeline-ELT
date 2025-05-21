@@ -7,3 +7,5 @@ minikube-linux-amd64
 *.zip
 *.tar.gz
 *.csv
+.env.example
+db-secret.yaml

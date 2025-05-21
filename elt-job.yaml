@@ -8,6 +8,7 @@ spec:
       containers:
         - name: elt
           image: elt-orchestrator:latest
+          imagePullPolicy: Never
           envFrom:
             - secretRef:
                 name: db-credentials

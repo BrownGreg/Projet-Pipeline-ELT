@@ -23,8 +23,20 @@ def run_extract_load():
 
 def run_sql_transformations():
     logging.info("Exécution des transformations SQL...")
-    psql_cmd = f"psql -h {os.getenv('DB_HOST')} -U {os.getenv('DB_USER')} -d {os.getenv('DB_NAME')} -f sql/transformations.sql"
-    result = subprocess.run(psql_cmd, shell=True, capture_output=True, text=True)
+
+    env = os.environ.copy()
+    env["PGPASSWORD"] = os.getenv("DB_PASSWORD")
+
+    psql_cmd = [
+        "psql",
+        "-h", os.getenv("DB_HOST"),
+        "-U", os.getenv("DB_USER"),
+        "-d", os.getenv("DB_NAME"),
+        "-f", "sql/transformations.sql"
+    ]
+
+    result = subprocess.run(psql_cmd, env=env, capture_output=True, text=True)
+
     if result.returncode == 0:
         logging.info("Transformations SQL exécutées avec succès.")
     else:
@@ -33,7 +45,6 @@ def run_sql_transformations():
 
 if __name__ == "__main__":
     logging.info("=== PIPELINE ELT - Démarrage ===")
-
     start = time.time()
 
     run_extract_load()
