@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 DB_PARAMS = {
@@ -47,7 +46,8 @@ try:
     cur = conn.cursor()
     logging.info("Connexion à PostgreSQL réussie")
 
-    cur.execute("""
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS raw_cars (
             id SERIAL PRIMARY KEY,
             model TEXT,
@@ -61,26 +61,30 @@ try:
             enginesize FLOAT,
             make TEXT
         );
-    """)
+    """
+    )
 
     for _, row in df.iterrows():
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO raw_cars (
                 model, year, price, transmission,
                 mileage, fueltype, tax, mpg, enginesize, make
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (
-            row.get("model"),
-            row.get("year"),
-            row.get("price"),
-            row.get("transmission"),
-            row.get("mileage"),
-            row.get("fueltype"),
-            row.get("tax"),
-            row.get("mpg"),
-            row.get("enginesize"),
-            row.get("make")
-        ))
+        """,
+            (
+                row.get("model"),
+                row.get("year"),
+                row.get("price"),
+                row.get("transmission"),
+                row.get("mileage"),
+                row.get("fueltype"),
+                row.get("tax"),
+                row.get("mpg"),
+                row.get("enginesize"),
+                row.get("make"),
+            ),
+        )
 
     conn.commit()
     logging.info(f"Données insérées avec succès dans la table raw_cars")
@@ -89,8 +93,8 @@ except Exception as e:
     logging.error(f"Erreur PostgreSQL : {e}")
     raise
 finally:
-    if 'cur' in locals():
+    if "cur" in locals():
         cur.close()
-    if 'conn' in locals():
+    if "conn" in locals():
         conn.close()
         logging.info("Connexion PostgreSQL fermée")

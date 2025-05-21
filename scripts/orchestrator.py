@@ -29,10 +29,14 @@ def run_sql_transformations():
 
     psql_cmd = [
         "psql",
-        "-h", os.getenv("DB_HOST"),
-        "-U", os.getenv("DB_USER"),
-        "-d", os.getenv("DB_NAME"),
-        "-f", "sql/transformations.sql"
+        "-h",
+        os.getenv("DB_HOST"),
+        "-U",
+        os.getenv("DB_USER"),
+        "-d",
+        os.getenv("DB_NAME"),
+        "-f",
+        "sql/transformations.sql",
     ]
 
     result = subprocess.run(psql_cmd, env=env, capture_output=True, text=True)
