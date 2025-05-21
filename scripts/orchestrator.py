@@ -15,7 +15,7 @@ def run_extract_load():
     logging.info("Lancement de l'ingestion des données brutes...")
     script_path = os.path.abspath("scripts/extract_load.py")
     result = subprocess.run(
-        [sys.executable, script_path], capture_output=True, text=True
+        [sys.executable, script_path], capture_output=True, text=True  # nosec B603
     )
     if result.returncode == 0:
         logging.info("Ingestion réussie.")
@@ -41,8 +41,9 @@ def run_sql_transformations():
         "-f",
         os.path.abspath("sql/transformations.sql"),
     ]
-    result = subprocess.run(psql_cmd, capture_output=True, text=True, env=env)
-
+    result = subprocess.run(
+        psql_cmd, capture_output=True, text=True, env=env  # nosec B603
+    )
     if result.returncode == 0:
         logging.info("Transformations SQL exécutées avec succès.")
     else:
