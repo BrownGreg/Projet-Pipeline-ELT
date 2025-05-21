@@ -9,3 +9,5 @@ minikube-linux-amd64
 *.csv
 .env.example
 db-secret.yaml
+.env.test
+.env.example
