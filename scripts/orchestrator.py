@@ -32,10 +32,14 @@ def run_sql_transformations():
     psql_path = "/usr/bin/psql"  # Adapter si besoin selon l'image Docker
     psql_cmd = [
         psql_path,
-        "-h", os.getenv("DB_HOST"),
-        "-U", os.getenv("DB_USER"),
-        "-d", os.getenv("DB_NAME"),
-        "-f", os.path.abspath("sql/transformations.sql"),
+        "-h",
+        os.getenv("DB_HOST"),
+        "-U",
+        os.getenv("DB_USER"),
+        "-d",
+        os.getenv("DB_NAME"),
+        "-f",
+        os.path.abspath("sql/transformations.sql"),
     ]
     result = subprocess.run(psql_cmd, capture_output=True, text=True, env=env)
 
