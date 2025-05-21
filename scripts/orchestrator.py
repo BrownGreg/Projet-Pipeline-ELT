@@ -1,5 +1,5 @@
 import time
-import subprocess
+import subprocess  # nosec B404
 import logging
 import os
 import sys
