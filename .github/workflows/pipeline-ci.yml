@@ -25,3 +25,7 @@ jobs:
 
       - name: Run tests
         run: pytest tests/
+
+      - name: Start SSH session for debug
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
